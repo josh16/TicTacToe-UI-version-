@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 
 //Class that holds relevant details for playerColour
-[System.Serializable]
+[System.Serializable] //Shows up inspector
 public class PlayerColor{
 
 	public Color panelColour;
@@ -13,11 +13,12 @@ public class PlayerColor{
 }
 
 //Class that holds relevant details for the image and text 
-[System.Serializable]
+[System.Serializable] //Shows up inspector
 public class Player{
 
 	public Image panel;
 	public Text text;
+	public Button button;
 }
 
 public class GameController : MonoBehaviour {
@@ -33,6 +34,7 @@ public class GameController : MonoBehaviour {
 	private int moveCount; // How many moves has it been?
 
 	public GameObject RestartButton;
+	public GameObject startInfo;
 
 	public Player playerX;
 	public Player playerO;
@@ -44,11 +46,9 @@ public class GameController : MonoBehaviour {
 	{
 		RestartButton.SetActive(false);
 		SetGameControllerReferenceOnButtons (); // When the game starts, this function will be called
-		playerSide = "X";
 		gameOverPanel.SetActive (false);
 		moveCount = 0; // When the Game starts, moveCount will be set to 0
 
-		SetPlayerColours (playerX, playerO);
 	}
 
 
@@ -162,6 +162,7 @@ public class GameController : MonoBehaviour {
 		if (winningPlayer == "draw") 
 		{
 			SetGameOverText ("It's a Draw!!");
+			SetPlayerColoursInactive ();
 		} 
 		else 
 		{
@@ -181,12 +182,12 @@ public class GameController : MonoBehaviour {
 
 	public void RestartGame()
 	{
-		playerSide = "X";
 		moveCount = 0;
 		gameOverPanel.SetActive (false);
-		SetBoardInteractable (true);
 		RestartButton.SetActive (false);
-		SetPlayerColours (playerX, playerO);
+		SetPlayerButtons (true);
+		SetPlayerColoursInactive ();
+		startInfo.SetActive (true);
 
 
 		//Resets all the buttons to blank again
@@ -210,13 +211,58 @@ public class GameController : MonoBehaviour {
 	
 	}
 
-
+	//Set PlayersColours Function
 	void SetPlayerColours(Player newPlayer, Player oldPlayer)
 	{
 		newPlayer.panel.color = activePlayerColour.panelColour;
 		newPlayer.panel.color = activePlayerColour.textColour;
 		oldPlayer.panel.color = inactivePlayerColour.panelColour;
 		oldPlayer.panel.color = inactivePlayerColour.textColour;
+	}
+
+
+	void StartGame()
+	{
+		SetBoardInteractable (true);
+		SetPlayerButtons (false);
+		startInfo.SetActive (false);
+	}
+
+
+	//Starting Side Function
+	public void SetStartingSide(string StartingSide)
+	{
+		playerSide = StartingSide; // Set playerSide to Starting Side
+
+
+		if (playerSide == "X") 
+		{
+			SetPlayerColours (playerX, playerO);
+		} 
+
+		else 
+		{
+			SetPlayerColours (playerO, playerX);
+		}
+	
+		StartGame (); // Call "StartGame" Function
+	}
+
+
+	//This will set Players buttons
+	void SetPlayerButtons(bool toggle)
+	{
+		playerX.button.interactable = toggle;
+		playerO.button.interactable = toggle;
+	}
+
+	//This will set the Players Colour to inactive
+	void SetPlayerColoursInactive()
+	{
+		playerX.panel.color = inactivePlayerColour.panelColour;
+		playerX.text.color = inactivePlayerColour.textColour;
+		playerO.panel.color = inactivePlayerColour.panelColour;
+		playerO.text.color = inactivePlayerColour.textColour;
 	}
 
 
